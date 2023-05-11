@@ -30,6 +30,7 @@ async function run() {
 
         // select database 
         const serviceCollection = client.db('carDoctor').collection('services')
+        const bookingCollection = client.db('carDoctor').collection('bookings')
 
         // get all data 
         app.get('/services', async (req, res) => {
@@ -43,13 +44,23 @@ async function run() {
             const id = req.params.id;
             const query = { _id: new ObjectId(id) }
             const options = {
-                projection: { title: 1, price: 1, service_id: 1, img: 1, description: 1, _id:0 }
+                projection: { title: 1, price: 1, service_id: 1, img: 1, description: 1, }
             }
             const result = await serviceCollection.findOne(query, options);
             res.send(result);
         })
 
-        // Send a ping to confirm a successful connection
+
+        // bookings 
+        app.post('/bookings', async (req, res) => {
+            const booking = req.body
+            const result = await bookingCollection.insertOne(booking)
+            res.send(result);
+
+        });
+
+
+        // Send a ping to confirm a successful connection 
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     } finally {
